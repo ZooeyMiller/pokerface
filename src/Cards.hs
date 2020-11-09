@@ -36,21 +36,20 @@ packOfCards =
 
 shuffle :: [Card] -> IO [Card]
 shuffle cards = do
-  initialLength <- pure $ length cards - 1
-
   -- get me a random index in the list
-  index <- getStdRandom $ randomR (0, initialLength)
-
+  index <- getStdRandom $ randomR (0, length cards - 1)
   -- get the card at that index, and the list with that card removed
   let (card, newCards) = removeCard index cards
 
-  -- if the card existed, recurse while concatenating, else return just the newCards (an empty list at this point)
   case card of
     Just c -> fmap (c :) (shuffle newCards)
     Nothing -> pure newCards
 
 removeCard :: Int -> [Card] -> (Maybe Card, [Card])
-removeCard i cs = go 0 i cs []
+removeCard goalIndex cards = go 0 goalIndex cards []
   where
-    go curr i' (c : cs') rcs = if curr == i' then (Just c, cs' ++ rcs) else go (curr + 1) i' cs' (c : rcs)
-    go curr i' [] rcs = (Nothing, rcs)
+    go currentIndex goalIndex' (card : cards') cardsToReturn =
+      if currentIndex == goalIndex'
+        then (Just card, cards' ++ cardsToReturn)
+        else go (currentIndex + 1) goalIndex' cards' (card : cardsToReturn)
+    go _ _ [] cardsToReturn = (Nothing, cardsToReturn)
