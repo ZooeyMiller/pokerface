@@ -75,3 +75,9 @@ deal amountToDeal cards = go amountToDeal [] cards
     go 0 dealt pack = Right (dealt, pack)
     go _ _ [] = Left PackEmptyError
     go amt dealt (head : pack) = go (amt - 1) (head : dealt) pack
+
+-- It would be nice to use a vector or some kind of way to represent in the type
+-- that we are only taking lists of 7, but that doesn't actually change the logic
+getHand :: [Card] -> Hand
+
+-- here we need to get all possible hands for the given 7 cards, and then return the best hand from them
