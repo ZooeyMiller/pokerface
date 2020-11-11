@@ -26,6 +26,21 @@ data Card = Card
   }
   deriving (Show)
 
+data Hand
+  = HighCard
+  | Pair
+  | TwoPair
+  | ThreeOfAKind
+  | Straight
+  | Flush
+  | FullHouse
+  | FourOfAKind
+  | StraightFlush
+  | RoyalFlush
+  deriving (Ord, Eq, Show)
+
+data Error = PackEmptyError deriving (Show)
+
 -- can I specify unique list?
 packOfCards :: [Card]
 packOfCards =
@@ -53,3 +68,10 @@ removeCard goalIndex cards = go 0 goalIndex cards []
         then (Just card, cards' ++ cardsToReturn)
         else go (currentIndex + 1) goalIndex' cards' (card : cardsToReturn)
     go _ _ [] cardsToReturn = (Nothing, cardsToReturn)
+
+deal :: Int -> [Card] -> Either Error ([Card], [Card])
+deal amountToDeal cards = go amountToDeal [] cards
+  where
+    go 0 dealt pack = Right (dealt, pack)
+    go _ _ [] = Left PackEmptyError
+    go amt dealt (head : pack) = go (amt - 1) (head : dealt) pack
