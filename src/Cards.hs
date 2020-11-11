@@ -1,5 +1,6 @@
 module Cards where
 
+import Data.Maybe
 import System.Random
 
 data Suit = Diamonds | Hearts | Spades | Clubs deriving (Eq, Show, Enum)
@@ -24,7 +25,7 @@ data Card = Card
   { suit :: Suit,
     rank :: Rank
   }
-  deriving (Show)
+  deriving (Show, Eq)
 
 data Hand
   = HighCard
@@ -76,8 +77,62 @@ deal amountToDeal cards = go amountToDeal [] cards
     go _ _ [] = Left PackEmptyError
     go amt dealt (head : pack) = go (amt - 1) (head : dealt) pack
 
+-- need a datatype for hand with the cards that make up that hand
+data CardHand = CardHand Hand [Card] deriving (Show, Eq)
+
+instance Ord CardHand where
+  compare (CardHand hand1 _) (CardHand hand2 _) = compare hand1 hand2
+
 -- It would be nice to use a vector or some kind of way to represent in the type
 -- that we are only taking lists of 7, but that doesn't actually change the logic
-getHand :: [Card] -> Hand
+getBestHand :: [Card] -> CardHand
+getBestHand = maximum . getHands
 
 -- here we need to get all possible hands for the given 7 cards, and then return the best hand from them
+getHands :: [Card] -> [CardHand]
+getHands hand =
+  catMaybes $
+    fmap
+      ($ hand)
+      [ getHighCard,
+        getPair,
+        getTwoPair,
+        getThreeOfAKind,
+        getStraight,
+        getFlush,
+        getFullHouse,
+        getFourOfAKind,
+        getStraightFlush,
+        getRoyalFlush
+      ]
+
+-- we need get functions for all of the potential hands
+getHighCard :: [Card] -> Maybe CardHand
+getHighCard = undefined
+
+getPair :: [Card] -> Maybe CardHand
+getPair = undefined
+
+getTwoPair :: [Card] -> Maybe CardHand
+getTwoPair = undefined
+
+getThreeOfAKind :: [Card] -> Maybe CardHand
+getThreeOfAKind = undefined
+
+getStraight :: [Card] -> Maybe CardHand
+getStraight = undefined
+
+getFlush :: [Card] -> Maybe CardHand
+getFlush = undefined
+
+getFullHouse :: [Card] -> Maybe CardHand
+getFullHouse = undefined
+
+getFourOfAKind :: [Card] -> Maybe CardHand
+getFourOfAKind = undefined
+
+getStraightFlush :: [Card] -> Maybe CardHand
+getStraightFlush = undefined
+
+getRoyalFlush :: [Card] -> Maybe CardHand
+getRoyalFlush = undefined
