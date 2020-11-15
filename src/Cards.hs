@@ -1,5 +1,6 @@
 module Cards where
 
+import Data.List
 import Data.Maybe
 import System.Random
 
@@ -106,9 +107,21 @@ getHands hand =
         getRoyalFlush
       ]
 
+safeTake :: Int -> [a] -> Maybe [a]
+safeTake num list = reverse <$> go num list []
+  where
+    go 0 source res = Just res
+    go toTake [] res = Nothing
+    go toTake (forRes : source) res = go (toTake - 1) source (forRes : res)
+
+orderCards :: [Card] -> [Card]
+orderCards = sortOn rank
+
 -- we need get functions for all of the potential hands
 getHighCard :: [Card] -> Maybe CardHand
-getHighCard = undefined
+getHighCard cards = (CardHand HighCard) <$> resCards
+  where
+    resCards = safeTake 5 $ reverse $ orderCards cards
 
 getPair :: [Card] -> Maybe CardHand
 getPair = undefined
