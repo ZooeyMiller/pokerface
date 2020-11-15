@@ -6,8 +6,7 @@ import System.Random
 data Suit = Diamonds | Hearts | Spades | Clubs deriving (Eq, Show, Enum)
 
 data Rank
-  = One
-  | Two
+  = Two
   | Three
   | Four
   | Five
@@ -19,6 +18,7 @@ data Rank
   | Jack
   | Queen
   | King
+  | Ace
   deriving (Eq, Ord, Show, Enum)
 
 data Card = Card
