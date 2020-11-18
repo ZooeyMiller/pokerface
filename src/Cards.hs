@@ -167,7 +167,14 @@ getFullHouse :: [Card] -> Maybe CardHand
 getFullHouse = undefined
 
 getFourOfAKind :: [Card] -> Maybe CardHand
-getFourOfAKind = undefined
+getFourOfAKind cards = getRes fours
+  where
+    fours = nub $ filter ((== 4) . length) $ groupCards cards
+    notFours = nub $ filter ((/= 4) . length) $ groupCards cards
+    resHand = makeLengthFive (join fours) (join notFours)
+    getRes fours'
+      | length fours' > 0 = Just $ CardHand FourOfAKind resHand
+      | otherwise = Nothing
 
 getStraightFlush :: [Card] -> Maybe CardHand
 getStraightFlush = undefined
@@ -183,3 +190,14 @@ sampleTwoPairHand = [Card Spades Two, Card Spades Three] ++ (take 5 packOfCards)
 
 sampleThreeOfAKindHand :: [Card]
 sampleThreeOfAKindHand = [Card Spades Two, Card Hearts Two] ++ (take 5 packOfCards)
+
+sampleFourOfAKindHand :: [Card]
+sampleFourOfAKindHand =
+  [ Card Spades Two,
+    Card Clubs Two,
+    Card Hearts Two,
+    Card Diamonds Two,
+    Card Spades Ten,
+    Card Spades King,
+    Card Clubs Queen
+  ]
