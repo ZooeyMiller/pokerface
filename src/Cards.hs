@@ -164,7 +164,10 @@ getFlush :: [Card] -> Maybe CardHand
 getFlush = undefined
 
 getFullHouse :: [Card] -> Maybe CardHand
-getFullHouse = undefined
+getFullHouse cards = CardHand FullHouse <$> ((++) <$> three <*> pair)
+  where
+    three = find ((== 3) . length) $ groupCards cards
+    pair = find ((== 2) . length) $ groupCards cards
 
 getFourOfAKind :: [Card] -> Maybe CardHand
 getFourOfAKind cards = getRes fours
@@ -198,6 +201,17 @@ sampleFourOfAKindHand =
     Card Hearts Two,
     Card Diamonds Two,
     Card Spades Ten,
+    Card Spades King,
+    Card Clubs Queen
+  ]
+
+sampleFullHouseHand :: [Card]
+sampleFullHouseHand =
+  [ Card Spades Two,
+    Card Clubs Two,
+    Card Hearts Two,
+    Card Diamonds Three,
+    Card Spades Three,
     Card Spades King,
     Card Clubs Queen
   ]
