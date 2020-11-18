@@ -130,6 +130,7 @@ groupCards cards = map getMatches cards
       where
         matchRank cardFromList = rank cardFromList == rank card
 
+-- Need to refactor this to take highest cards from toConcatFrom
 makeLengthFive :: [a] -> [a] -> [a]
 makeLengthFive toConcatTo toConcatFrom
   | length toConcatTo == 5 = toConcatTo
