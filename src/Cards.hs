@@ -1,5 +1,6 @@
 module Cards where
 
+import Control.Monad
 import Data.List
 import Data.Maybe
 import System.Random
@@ -96,8 +97,7 @@ getHands hand =
     fmap
       ($ hand)
       [ getHighCard,
-        getPair,
-        getTwoPair,
+        getPairOrTwoPair,
         getThreeOfAKind,
         getStraight,
         getFlush,
@@ -123,11 +123,29 @@ getHighCard cards = (CardHand HighCard) <$> resCards
   where
     resCards = safeTake 5 $ reverse $ orderCards cards
 
-getPair :: [Card] -> Maybe CardHand
-getPair = undefined
+groupCards :: [Card] -> [[Card]]
+groupCards cards = map getMatches cards
+  where
+    getMatches card = filter matchRank cards
+      where
+        matchRank cardFromList = rank cardFromList == rank card
 
-getTwoPair :: [Card] -> Maybe CardHand
-getTwoPair = undefined
+makeLengthFive :: [a] -> [a] -> [a]
+makeLengthFive toConcatTo toConcatFrom
+  | length toConcatTo == 5 = toConcatTo
+  | length toConcatTo > 5 = take 5 toConcatTo
+  | otherwise = makeLengthFive (head toConcatFrom : toConcatTo) (tail toConcatFrom)
+
+getPairOrTwoPair :: [Card] -> Maybe CardHand
+getPairOrTwoPair cards = getRes pairs
+  where
+    pairs = nub $ filter ((== 2) . length) $ groupCards cards
+    notPairs = nub $ filter ((/= 2) . length) $ groupCards cards
+    resHand = (makeLengthFive (join pairs) (join notPairs))
+    getRes pairs'
+      | length pairs' == 1 = Just $ CardHand Pair resHand
+      | length pairs' > 1 = Just $ CardHand TwoPair resHand
+      | otherwise = Nothing
 
 getThreeOfAKind :: [Card] -> Maybe CardHand
 getThreeOfAKind = undefined
@@ -149,3 +167,9 @@ getStraightFlush = undefined
 
 getRoyalFlush :: [Card] -> Maybe CardHand
 getRoyalFlush = undefined
+
+samplePairHand :: [Card]
+samplePairHand = Card Spades Two : take 6 packOfCards
+
+sampleTwoPairHand :: [Card]
+sampleTwoPairHand = [Card Spades Two, Card Spades Three] ++ (take 5 packOfCards)
