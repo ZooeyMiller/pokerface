@@ -141,14 +141,21 @@ getPairOrTwoPair cards = getRes pairs
   where
     pairs = nub $ filter ((== 2) . length) $ groupCards cards
     notPairs = nub $ filter ((/= 2) . length) $ groupCards cards
-    resHand = (makeLengthFive (join pairs) (join notPairs))
+    resHand = makeLengthFive (join pairs) (join notPairs)
     getRes pairs'
       | length pairs' == 1 = Just $ CardHand Pair resHand
       | length pairs' > 1 = Just $ CardHand TwoPair resHand
       | otherwise = Nothing
 
 getThreeOfAKind :: [Card] -> Maybe CardHand
-getThreeOfAKind = undefined
+getThreeOfAKind cards = getRes threes
+  where
+    threes = nub $ filter ((== 3) . length) $ groupCards cards
+    notThrees = nub $ filter ((/= 3) . length) $ groupCards cards
+    resHand = makeLengthFive (join threes) (join notThrees)
+    getRes threes'
+      | length threes' > 0 = Just $ CardHand ThreeOfAKind resHand
+      | otherwise = Nothing
 
 getStraight :: [Card] -> Maybe CardHand
 getStraight = undefined
@@ -173,3 +180,6 @@ samplePairHand = Card Spades Two : take 6 packOfCards
 
 sampleTwoPairHand :: [Card]
 sampleTwoPairHand = [Card Spades Two, Card Spades Three] ++ (take 5 packOfCards)
+
+sampleThreeOfAKindHand :: [Card]
+sampleThreeOfAKindHand = [Card Spades Two, Card Hearts Two] ++ (take 5 packOfCards)
